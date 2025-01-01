@@ -16,7 +16,7 @@ const Login = () => {
 
         if (!isSigningIn) {
             setIsSigningIn(true)
-            setErrorMessage('')  // Clear any previous error message
+            setErrorMessage('')  
 
             try {
                 await doSignInWithEmailAndPassword(email, password)
@@ -33,7 +33,7 @@ const Login = () => {
 
         if (!isSigningIn) {
             setIsSigningIn(true)
-            setErrorMessage('')  // Clear any previous error message
+            setErrorMessage('')  
 
             doSignInWithGoogle()
                 .catch(err => {

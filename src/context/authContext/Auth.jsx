@@ -32,19 +32,19 @@ export function AuthProvider({ children }) {
       );
       setIsEmailUser(isEmail);
 
-      // Fetch the user's role from the database
+      
       const db = getDatabase();
       const roleRef = ref(db, `users/${user.uid}/role`);
       try {
         const snapshot = await get(roleRef);
         if (snapshot.exists()) {
-          setUserRole(snapshot.val()); // Set the fetched role
+          setUserRole(snapshot.val()); 
         } else {
-          setUserRole("guest"); // Default role if none exists
+          setUserRole("guest"); 
         }
       } catch (error) {
         console.error("Error fetching user role:", error);
-        setUserRole("guest"); // Default role on error
+        setUserRole("guest"); 
       }
     } else {
       setCurrentUser(null);
@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     userLoggedIn,
-    userRole, // Expose userRole in context
+    userRole, 
     isEmailUser,
     currentUser,
     setCurrentUser,

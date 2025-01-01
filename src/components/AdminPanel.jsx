@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { app } from "../firebase";
 import { getDatabase, ref, get } from "firebase/database";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 const AdminPanel = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate(); // Initialize navigate
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         async function fetchData() {

@@ -1,7 +1,6 @@
 import './App.css';
 import CustomerSupportChat from './components/CustomerSupportChat';
 import AdminPanel from './components/AdminPanel';
-import Read from './components/Read';
 import Login from './components/Login';
 import { BrowserRouter } from 'react-router-dom';
 import { useRoutes } from 'react-router-dom';
@@ -20,10 +19,6 @@ const AppRoutes = () => {
     {
       path: '/Dashboard',
       element: <AdminPanel />,
-    },
-    {
-      path: '/Read',
-      element: <Read />,
     },
     {
       path: '/signin',

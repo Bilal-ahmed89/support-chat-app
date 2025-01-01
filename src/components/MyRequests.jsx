@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getDatabase, ref, get } from "firebase/database";
 import { app } from "../firebase";
 import { getAuth } from "firebase/auth";
-import { Link } from "react-router-dom"; // To add link for navigation
+import { Link } from "react-router-dom"; 
 
 const MyRequests = () => {
     const [requests, setRequests] = useState([]);
@@ -22,12 +22,12 @@ const MyRequests = () => {
                 if (snapshot.exists()) {
                     const allRequests = snapshot.val();
 
-                    // Filter requests that match the logged-in user's email
+                    
                     const filteredRequests = Object.entries(allRequests)
                         .filter(([id, request]) => request.email === currentUserEmail)
                         .map(([id, request]) => ({ id, ...request }));
 
-                    setRequests(filteredRequests); // Set filtered data to state
+                    setRequests(filteredRequests); 
                 } else {
                     setRequests([]);
                 }
@@ -66,7 +66,7 @@ const MyRequests = () => {
                         <div key={id} className="bg-white shadow-md rounded-lg p-6 mb-4">
                             <div className="mb-4">
                                 <Link
-                                    to={`/reply/${id}`} // Link to the detail page of the request
+                                    to={`/reply/${id}`}
                                     className="text-xl font-semibold text-blue-500 hover:underline"
                                 >
                                     {subject}

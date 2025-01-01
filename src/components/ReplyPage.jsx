@@ -1,16 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { app } from "../firebase";
+import { app, auth } from "../firebase";
 import { getDatabase, ref, get, push } from "firebase/database";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ReplyPage = () => {
     const { id } = useParams();
+    const [user, setUser] = useState(null); 
     const [request, setRequest] = useState(null);
     const [reply, setReply] = useState('');
     const [loading, setLoading] = useState(true);
-    const [userRole, setUserRole] = useState('admin');  // Example role, 'admin' or 'user'
+    const [userRole, setUserRole] = useState(null); 
+
+    useEffect(() => {
+        
+        const fetchUser = () => {
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+                setUser(currentUser);
+                console.log("User directly from Firebase Auth:", currentUser);
+            } else {
+                console.warn("No user is currently authenticated.");
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        
+        async function fetchUserRole() {
+            if (user && user.uid) {
+                try {
+                    const db = getDatabase(app);
+                    const dbRef = ref(db, `users/${user.uid}`); 
+                    const snapshot = await get(dbRef);
+
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+                        setUserRole(userData.role); 
+                        console.log("User data from Firebase Database:", userData);
+                    } else {
+                        toast.error("User data not found in the database.");
+                    }
+                } catch (error) {
+                    toast.error("Error fetching user role.");
+                    console.error(error);
+                }
+            }
+        }
+
+        if (user) {
+            fetchUserRole();
+        }
+    }, [user]);
 
     useEffect(() => {
         async function fetchRequest() {
@@ -35,6 +79,11 @@ const ReplyPage = () => {
     }, [id]);
 
     const handleReplySubmit = async () => {
+        if (!userRole) {
+            toast.error("User role is not available.");
+            return;
+        }
+
         if (reply.trim() === "") {
             toast.error("Please enter a reply.");
             return;
@@ -42,22 +91,22 @@ const ReplyPage = () => {
 
         try {
             const db = getDatabase(app);
-            const dbRef = ref(db, `requests/${id}/adminResponse`);
+            const dbRef = ref(db, `requests/${id}/adminResponse`); 
             const newResponse = {
                 response: reply,
                 respondedAt: new Date().toISOString(),
-                role: userRole,  // Store the role of the person posting the response
+                role: userRole, 
             };
 
-            // Push the new response to the adminResponse array
+            
             await push(dbRef, newResponse);
 
-            // Update the request state with the new response
+           
             setRequest((prevRequest) => ({
                 ...prevRequest,
                 adminResponse: {
                     ...prevRequest.adminResponse,
-                    [new Date().toISOString()]: newResponse, // Add the new response to the adminResponse
+                    [new Date().toISOString()]: newResponse, 
                 },
             }));
 
@@ -78,15 +127,15 @@ const ReplyPage = () => {
                 <div className="text-lg font-semibold mb-4">
                     <strong>Request ID:</strong> {id}
                 </div>
-                <div className="text-lg mb-4"><strong>Name:</strong> {request.name}</div>
-                <div className="text-lg mb-4"><strong>Subject:</strong> {request.subject}</div>
-                <div className="text-lg mb-4"><strong>Message:</strong> {request.message}</div>
-                <div className="text-lg mb-4"><strong>Timestamp:</strong> {request.timestamp}</div>
+                <div className="text-lg mb-4"><strong>Name:</strong> {request?.name}</div>
+                <div className="text-lg mb-4"><strong>Subject:</strong> {request?.subject}</div>
+                <div className="text-lg mb-4"><strong>Message:</strong> {request?.message}</div>
+                <div className="text-lg mb-4"><strong>Timestamp:</strong> {request?.timestamp}</div>
             </div>
 
             {/* Chat-like Display of Responses */}
             <div className="w-full max-w-4xl space-y-4 mb-6">
-                {request.adminResponse ? (
+                {request?.adminResponse ? (
                     Object.entries(request.adminResponse).map(([key, response]) => (
                         <div key={key} className="flex flex-col space-y-2">
                             <div
@@ -97,7 +146,7 @@ const ReplyPage = () => {
                                     className={`font-semibold ${response.role === 'admin' ? 'text-blue-600' : 'text-green-600'
                                         }`}
                                 >
-                                    {response.role === 'admin' ? 'Admin' : 'User'}:
+                                    {response.role === 'admin' ? 'admin' : 'guest'}:
                                 </div>
                                 <div>{response.response}</div>
                                 <div className="text-sm text-gray-500">
@@ -111,7 +160,6 @@ const ReplyPage = () => {
                 )}
             </div>
 
-            {/* Reply Textbox */}
             <div className="w-full max-w-4xl mb-6">
                 <label className="block mb-2 font-semibold text-lg">Reply:</label>
                 <textarea

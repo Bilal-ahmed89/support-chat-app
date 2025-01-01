@@ -27,11 +27,11 @@ const Register = () => {
         setIsRegistering(true);
 
         try {
-            // Create user with email and password
+           
             const userCredential = await doCreateUserWithEmailAndPassword(email, password);
             const user = userCredential.user;
 
-            // Store user data with role in Realtime Database
+            
             const db = getDatabase();
             const userRef = ref(db, `users/${user.uid}`);
             await set(userRef, {
@@ -39,7 +39,6 @@ const Register = () => {
                 role: 'guest',
             });
 
-            console.log('User registered and role stored successfully.');
             navigate('/');
         } catch (error) {
             setErrorMessage(error.message);
