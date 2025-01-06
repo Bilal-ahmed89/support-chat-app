@@ -11,8 +11,7 @@ import ReplyPage from './components/ReplyPage';
 import MyRequests from './components/MyRequests';
 
 const AppRoutes = () => {
-  const { userLoggedIn } = useAuth();  // using userLoggedIn from AuthContext
-
+  const { userLoggedIn } = useAuth(); 
   const routesArray = [
     {
       path: '/signin',
@@ -47,7 +46,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Header /> {/* Move the Header outside of AppRoutes */}
+        <Header />
         <div className="w-full h-screen flex flex-col">
           <AppRoutes />
         </div>
