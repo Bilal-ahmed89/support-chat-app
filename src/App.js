@@ -3,23 +3,17 @@ import CustomerSupportChat from './components/CustomerSupportChat';
 import AdminPanel from './components/AdminPanel';
 import Login from './components/Login';
 import { BrowserRouter } from 'react-router-dom';
-import { useRoutes } from 'react-router-dom';
-import { AuthProvider } from './context/authContext/Auth';
+import { useRoutes, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/authContext/Auth';
 import Register from './components/Register';
 import Header from './components/Header';
 import ReplyPage from './components/ReplyPage';
 import MyRequests from './components/MyRequests';
 
 const AppRoutes = () => {
+  const { userLoggedIn } = useAuth();  // using userLoggedIn from AuthContext
+
   const routesArray = [
-    {
-      path: '/',
-      element: <CustomerSupportChat />,
-    },
-    {
-      path: '/Dashboard',
-      element: <AdminPanel />,
-    },
     {
       path: '/signin',
       element: <Login />,
@@ -29,16 +23,20 @@ const AppRoutes = () => {
       element: <Register />,
     },
     {
-      path: '/',
-      element: <Header />,
-    },
-    {
       path: '/reply/:id',
-      element: <ReplyPage />
+      element: userLoggedIn ? <ReplyPage /> : <Navigate to="/signin" />,
     },
     {
-      path: 'my-requests',
-      element: <MyRequests  />
+      path: '/my-requests',
+      element: userLoggedIn ? <MyRequests /> : <Navigate to="/signin" />,
+    },
+    {
+      path: '/Dashboard',
+      element: userLoggedIn ? <AdminPanel /> : <Navigate to="/signin" />,
+    },
+    {
+      path: '/',
+      element: userLoggedIn ? <CustomerSupportChat /> : <Navigate to="/signin" />,
     },
   ];
 
@@ -49,7 +47,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Header />
+        <Header /> {/* Move the Header outside of AppRoutes */}
         <div className="w-full h-screen flex flex-col">
           <AppRoutes />
         </div>

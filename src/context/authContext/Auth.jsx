@@ -26,13 +26,11 @@ export function AuthProvider({ children }) {
       setCurrentUser({ ...user });
       setUserLoggedIn(true);
 
-    
       const isEmail = user.providerData.some(
         (provider) => provider.providerId === "password"
       );
       setIsEmailUser(isEmail);
 
-      
       const db = getDatabase();
       const roleRef = ref(db, `users/${user.uid}/role`);
       try {
