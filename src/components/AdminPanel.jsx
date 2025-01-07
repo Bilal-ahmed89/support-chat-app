@@ -40,7 +40,7 @@ const AdminPanel = () => {
 
     return (
         <div className="p-5 mt-10">
-            <h1 className="text-2xl font-semibold mb-4">Admin Panel</h1>
+            <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
             {loading ? (
                 <p>Loading...</p>
             ) : (

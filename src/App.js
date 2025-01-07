@@ -47,7 +47,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Header />
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-screen flex flex-col mt-6">
           <AppRoutes />
         </div>
       </BrowserRouter>
